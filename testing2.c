@@ -1,18 +1,20 @@
-#include <stdio.h>
-#include <string.h>
+#include<stdio.h>
+#include<string.h>
 
-int n, i ;
+int i, j, n;
 int size = 0;
-char choice = ' ';
+char choice=' ';
+char status[10];
+
 
 typedef struct tache
 {
-    int id;
     char titre[30];
-    char description[150];
+    char description[600];
     int deadline;
     int status;
-} tache;
+}tache;
+
 
 void displaymenu()
 {
@@ -23,62 +25,57 @@ void displaymenu()
     printf("\n 4. Supprimer une tache");
     printf("\n 5. Rechercher une tache");
     printf("\n 6. Statistique");
-    printf("\n #. Quitter\n");
+    printf("\n#. Quitter\n");
+    scanf(" %c", &choice);
 }
+void displaytask(tache t[100], int i)
+{
+    printf("%d Titre: %s, Description: %s, Deadline: %d \n", i+1, t[i].titre, t[i].description, t[i].deadline);
+
+}
+void addtask(tache t[100], int i)
+{
+    for (i = 0; i < n; i++)
+    {
+        printf("Entrer le titre de la tache: ");
+        getchar();
+        gets(t[i].titre);
+        printf("Entrer la description de la tache: ");
+        getchar();
+        gets( t[i].description);
+        printf("Entrer le deadline de la tache en jrs: ");
+        scanf("%d", &t[i].deadline);
+        printf("Entrer le status de tache\n1=> A realiser\t 2=> En cours de realiser\t 3=> Done  ");
+        scanf("%d", &t[i].status);
+        size++;
+    }
+}
+
+
 
 int main()
 {
     tache task[100];
 
     do
-    {
-        displaymenu();
-        printf("\nChoisissez une option : ");
-        scanf(" %c", &choice); // Added space before %c to consume any whitespace
+    {   displaymenu();
 
         switch (choice)
         {
-        case '1': // Ajouter une tache
-            printf("Entrer le nombre de taches que vous voulez ajouter : ");
-            scanf("%d", &n);
-            for (i = 0; i < n; i++)
-            {
-                printf("Entrer le titre de la tache : ");
-                getchar(); // Consume newline from previous input
-                fgets(task[size].titre, sizeof(task[size].titre), stdin);
-                strtok(task[size].titre, "\n"); // Remove trailing newline
+            case '1':   //ajouter une tache
 
-                printf("Entrer la description de la tache : ");
-                fgets(task[size].description, sizeof(task[size].description), stdin);
-                strtok(task[size].description, "\n"); // Remove trailing newline
+                printf("Entrer le nombre de tache que voulez ajoute: ");
+                scanf("%d", &n);
+                addtask(task, i);
+                break;
 
-                printf("Entrer le deadline de la tache en jours : ");
-                scanf("%d", &task[size].deadline);
+            case '2': // Afficher les taches
 
-                size++;
-            }
-            break;
-
-        case '2':
-            printf("Liste de toutes les taches :\n");
-            for (int i = 0; i < size; i++)
-            {
-                printf("Tache %d\n", i + 1);
-                printf("Titre : %s\n", task[i].titre);
-                printf("Description : %s\n", task[i].description);
-                printf("Deadline : %d jours\n", task[i].deadline);
-                printf("\n");
-            }
-            break;
-
-        case '#':
-            printf("Quitting...\n");
-            break;
-
-        default:
-            printf("Option non valide. Veuillez choisir une option valide.\n");
+                for ( i = 0; i < n; i++)
+                {
+                    displaytask(task, i);
+                }
+                break;
         }
-    } while (choice != '#');
-
-    return 0;
+    }while (choice != '#');
 }

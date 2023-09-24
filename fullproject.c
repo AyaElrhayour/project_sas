@@ -5,19 +5,20 @@
 
 int taskCount = 0;
 int i, n, id, taskIndex, choice, remainingTime;
-char titre[100] ,description[600];
+char titre[100] ,description[600], statut[100];
+
 // Structure pour representer une tache
 typedef struct {
     int id;
     char titre[100];
     char description[600];
     struct tm deadline;
+    int status;
 } Task;
 
-// ... (rest of your code remains the same)
 
 // Fonction pour ajouter une tache à la liste avec une deadline
-void addTask(Task *tasks, int *taskCount, const char *description, const char *titre, struct tm deadline) {
+void addTask(Task *tasks, int *taskCount, const char *description, const char *titre, struct tm deadline, const int *status) {
     if (*taskCount < 100) {
         strcpy(tasks[*taskCount].description, description);
         strcpy(tasks[*taskCount].titre, titre);
@@ -29,37 +30,35 @@ void addTask(Task *tasks, int *taskCount, const char *description, const char *t
     }
 }
 
-// Fonction pour afficher la liste des taches
 // Fonction pour afficher la liste des taches avec le temps restant
 void displayTasks(const Task *tasks, int taskCount) {
     printf("Liste des taches :\n");
      for (i = 0; i < taskCount; i++) {
-        int remainingTime = calculateDeadline(
+        remainingTime = calculateDeadline(
             tasks[i].deadline.tm_mday,
             tasks[i].deadline.tm_mon + 1, // Months are 0-based in struct tm
             tasks[i].deadline.tm_year + 1900, // Years are 1900-based in struct tm
             tasks[i].deadline.tm_hour,
             tasks[i].deadline.tm_min
         );
-
+         if (tasks[i].status == 1){
+            strcpy(statut,"status: to do");
+        }else if (tasks[i].status == 2){
+            strcpy(statut,"status: doing");
+        }else if(tasks[i].status == 3){
+            strcpy(statut,"status: done");
+        }
         // Check if the deadline has passed
         if (remainingTime < 0) {
             printf("%d. %s %s \n Deadline has passed.\n", i + 1, tasks[i].titre, tasks[i].description);
         } else {
-            printf("%d. %s %s \n Remaining time: %d hours\n", i + 1, tasks[i].titre, tasks[i].description, remainingTime);
+            printf("[%d] Titre: %s Description: %s  Remaining time: %d hours  status: %s \n", i + 1, tasks[i].titre, tasks[i].description, remainingTime , statut);
         }
+       
     }
 }
 
 
-// Fonction pour marquer une tache comme terminee
-void markTaskComplete( Task *tasks, int taskCount, int taskIndex) {
-    if (taskIndex >= 1 && taskIndex <= taskCount) {
-        printf("Tache marquee comme terminee.\n");
-    } else {
-        printf("Numero de tache invalide.\n");
-    }
-}
 
 // Fonction pour supprimer une tache de la liste
 void deleteTask( Task *tasks, int *taskCount, int taskIndex) {
@@ -128,7 +127,9 @@ int main() {
                 printf("Entrez le deadline (DD/MM/YYYY HH:MM) : ");
                 scanf("%d/%d/%d %d:%d", &deadline.tm_mday, &deadline.tm_mon, &deadline.tm_year, &deadline.tm_hour, &deadline.tm_min);
                 deadline.tm_year -= 1900;
-                addTask(tasks, &taskCount, description, titre, deadline);
+                printf("Entrer le status de tache : 1> A realiser\t 2> En cours de realiser\t 3> Done  ");
+                scanf("%s", &statut);
+                addTask(tasks, &taskCount, description, titre, deadline , statut);
             }
                 break;
             case 2:
